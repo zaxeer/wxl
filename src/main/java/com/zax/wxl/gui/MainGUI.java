@@ -19,7 +19,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+
 import com.zax.wxl.ExcelListReader;
+import com.zax.wxl.WordTemplateParser;
 
 public class MainGUI extends JFrame {
 
@@ -89,11 +92,15 @@ public class MainGUI extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ExcelListReader excelListReader = new ExcelListReader(excelListPath.getText());
+				WordTemplateParser templateParser = new WordTemplateParser(wordTemplatePath.getText());
 				excelListReader.setOutput(txtpnOutputAppearHere);
 				try {
-					excelListReader.parseExcel();
+					templateParser.parseWordFile(excelListReader.parseExcel());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					txtpnOutputAppearHere.setText(e.getMessage());
+					e.printStackTrace();
+				} catch (InvalidFormatException e) {
+					txtpnOutputAppearHere.setText(e.getMessage());
 					e.printStackTrace();
 				}
 			}
