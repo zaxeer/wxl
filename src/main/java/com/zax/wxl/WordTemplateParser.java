@@ -48,7 +48,7 @@ public class WordTemplateParser {
 			throws InvalidFormatException, IOException, BadLocationException {
 		
 		for (int count = 1; count < replacements.size(); count++) {
-			XWPFDocument doc = new XWPFDocument(OPCPackage.open(getFilePath()));
+			XWPFDocument doc = new XWPFDocument(OPCPackage.open(getFilePath()));// don't close will update template
 			for (XWPFParagraph p : doc.getParagraphs()) {
 				List<XWPFRun> runs = p.getRuns();
 				if (runs != null) {
