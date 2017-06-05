@@ -3,4 +3,11 @@
   <groupId>com.zax</groupId>
   <artifactId>wxl</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.apache.poi</groupId>
+  		<artifactId>poi-excelant</artifactId>
+  		<version>3.16</version>
+  	</dependency>
+  </dependencies>
 </project>
