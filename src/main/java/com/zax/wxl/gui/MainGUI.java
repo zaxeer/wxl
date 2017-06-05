@@ -18,6 +18,7 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
@@ -43,7 +44,7 @@ public class MainGUI extends JFrame {
 	 */
 	public MainGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 456, 300);
+		setBounds(100, 100, 796, 376);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -79,9 +80,11 @@ public class MainGUI extends JFrame {
 								JLabel lblPleaseSelectWord = new JLabel("Please Select Word Template:");
 				
 						wordTemplatePath = new JTextField();
+						wordTemplatePath.setText("D:\\Jamati Work\\Taleem UL Quraan\\Letter WQAF\\Template.docx");
 						wordTemplatePath.setColumns(10);
 				
 				excelListPath = new JTextField();
+				excelListPath.setText("D:\\Jamati Work\\Taleem UL Quraan\\Letter WQAF\\List.xlsx");
 				excelListPath.setColumns(10);
 				
 				lblPleaseSelectExcel = new JLabel("Please Select Excel List:");
@@ -94,12 +97,16 @@ public class MainGUI extends JFrame {
 				ExcelListReader excelListReader = new ExcelListReader(excelListPath.getText());
 				WordTemplateParser templateParser = new WordTemplateParser(wordTemplatePath.getText());
 				excelListReader.setOutput(txtpnOutputAppearHere);
+				templateParser.setOutput(txtpnOutputAppearHere);
 				try {
 					templateParser.parseWordFile(excelListReader.parseExcel());
 				} catch (IOException e) {
 					txtpnOutputAppearHere.setText(e.getMessage());
 					e.printStackTrace();
 				} catch (InvalidFormatException e) {
+					txtpnOutputAppearHere.setText(e.getMessage());
+					e.printStackTrace();
+				} catch (BadLocationException e) {
 					txtpnOutputAppearHere.setText(e.getMessage());
 					e.printStackTrace();
 				}

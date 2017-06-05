@@ -40,19 +40,18 @@ public class ExcelListReader {
 		Sheet datatypeSheet = workbook.getSheetAt(0);
 		Iterator<Row> iterator = datatypeSheet.iterator();
 
-		List row = null;
 		while (iterator.hasNext()) {
 
 			Row currentRow = iterator.next();
 			Iterator<Cell> cellIterator = currentRow.iterator();
-			row = new ArrayList<String>();
+			List<String> row = new ArrayList<String>();
 			while (cellIterator.hasNext()) {
 				Cell currentCell = cellIterator.next();
 				// getCellTypeEnum shown as deprecated for version 3.15
 				// getCellTypeEnum ill be renamed to getCellType starting from
 				// version 4.0
 				if (currentCell.getStringCellValue() != null) {
-					row.add(currentCell.getStringCellValue());
+					row.add(currentCell.getStringCellValue().trim());
 				}
 
 			}
@@ -60,6 +59,7 @@ public class ExcelListReader {
 		}
 		getOutput().setText("Excel parsed\n");
 		getOutput().setText(result.toString());
+		workbook.close();
 		return result;
 	}
 
