@@ -1,3 +1,4 @@
+# This script runs in runing location to get all doc,docx file and save-as PDFs
 $documents_path = Get-Location
 
 $word_app = New-Object -ComObject Word.Application
