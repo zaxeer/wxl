@@ -3,6 +3,7 @@ package com.zax.wxl.gui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.GroupLayout;
@@ -53,6 +54,8 @@ public class MainGUI extends JFrame {
 		excelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jFileChooser = new JFileChooser();
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				jFileChooser.setCurrentDirectory(workingDirectory);
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xlsx","xls");
 				jFileChooser.setFileFilter(filter);
 				jFileChooser.removeChoosableFileFilter(jFileChooser.getAcceptAllFileFilter());
@@ -67,6 +70,8 @@ public class MainGUI extends JFrame {
 				btnWordTemplate.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						JFileChooser jFileChooser = new JFileChooser();
+						File workingDirectory = new File(System.getProperty("user.dir"));
+						jFileChooser.setCurrentDirectory(workingDirectory);
 						FileNameExtensionFilter filter = new FileNameExtensionFilter("Word Files", "docx","doc");
 						jFileChooser.setFileFilter(filter);
 						jFileChooser.removeChoosableFileFilter(jFileChooser.getAcceptAllFileFilter());
