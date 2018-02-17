@@ -69,7 +69,7 @@ public class WordTemplateParser {
 				}
 			}
 			String directory = new File(templatePath).getParent();
-			doc.write(new FileOutputStream(directory + "/" + count + "_output.docx"));
+			doc.write(new FileOutputStream(directory + "/" + count + "_"+ fileName +".docx"));
 			this.output.getStyledDocument().insertString(this.output.getText().length(),
 					"\nFile created -> " + directory + "/" + count + "_"+ fileName +".docx", new SimpleAttributeSet());
 		}
