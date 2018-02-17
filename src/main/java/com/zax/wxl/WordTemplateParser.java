@@ -39,6 +39,7 @@ public class WordTemplateParser {
 		
 		for (int count = 1; count < replacements.size(); count++) {
 			String templatePath = replacements.get(count).get(replacements.get(count).size()-1);
+			String fileName = replacements.get(count).get(0);
 			@SuppressWarnings("resource")
 			XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
 			for (XWPFParagraph p : doc.getParagraphs()) {
@@ -70,7 +71,7 @@ public class WordTemplateParser {
 			String directory = new File(templatePath).getParent();
 			doc.write(new FileOutputStream(directory + "/" + count + "_output.docx"));
 			this.output.getStyledDocument().insertString(this.output.getText().length(),
-					"\nFile created -> " + directory + "/" + count + "_output.docx", new SimpleAttributeSet());
+					"\nFile created -> " + directory + "/" + count + "_"+ fileName +".docx", new SimpleAttributeSet());
 		}
 
 	}
