@@ -25,6 +25,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.zax.wxl.ExcelListReader;
 import com.zax.wxl.WordTemplateParser;
+import java.awt.Font;
 
 public class MainGUI extends JFrame {
 
@@ -33,7 +34,6 @@ public class MainGUI extends JFrame {
 	 */
 	private static final long serialVersionUID = 4469094356311946377L;
 	private JPanel contentPane;
-	private JTextField wordTemplatePath;
 	private JLabel lblPleaseSelectExcel;
 	private JTextField excelListPath;
 	private JButton excelButton;
@@ -65,28 +65,6 @@ public class MainGUI extends JFrame {
 				}
 			}
 		});
-		
-				JButton btnWordTemplate = new JButton("Browse");
-				btnWordTemplate.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						JFileChooser jFileChooser = new JFileChooser();
-						File workingDirectory = new File(System.getProperty("user.dir"));
-						jFileChooser.setCurrentDirectory(workingDirectory);
-						FileNameExtensionFilter filter = new FileNameExtensionFilter("Word Files", "docx","doc");
-						jFileChooser.setFileFilter(filter);
-						jFileChooser.removeChoosableFileFilter(jFileChooser.getAcceptAllFileFilter());
-						int returnVal = jFileChooser.showOpenDialog((Component)e.getSource());
-						if (returnVal == JFileChooser.APPROVE_OPTION) {
-							wordTemplatePath.setText(jFileChooser.getSelectedFile().getPath());
-						}
-					}
-				});
-						
-								JLabel lblPleaseSelectWord = new JLabel("Please Select Word Template:");
-				
-						wordTemplatePath = new JTextField();
-						wordTemplatePath.setText("D:\\Jamati Work\\Taleem UL Quraan\\Letter WQAF\\Template.docx");
-						wordTemplatePath.setColumns(10);
 				
 				excelListPath = new JTextField();
 				excelListPath.setText("D:\\Jamati Work\\Taleem UL Quraan\\Letter WQAF\\List.xlsx");
@@ -100,7 +78,7 @@ public class MainGUI extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ExcelListReader excelListReader = new ExcelListReader(excelListPath.getText());
-				WordTemplateParser templateParser = new WordTemplateParser(wordTemplatePath.getText());
+				WordTemplateParser templateParser = new WordTemplateParser();
 				excelListReader.setOutput(txtpnOutputAppearHere);
 				templateParser.setOutput(txtpnOutputAppearHere);
 				try {
@@ -119,6 +97,9 @@ public class MainGUI extends JFrame {
 		});
 		
 		JLabel lblOutput = new JLabel("Output:");
+		
+		JLabel lblCreateAColumn = new JLabel("Create Last column in Excel file named as \"WORD_TEMPLATE\" to select template for each file.");
+		lblCreateAColumn.setFont(new Font("Tahoma", Font.BOLD, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -126,25 +107,23 @@ public class MainGUI extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
+									.addContainerGap()
+									.addComponent(lblOutput))
+								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(4)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblPleaseSelectWord)
-										.addComponent(lblPleaseSelectExcel))
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(excelListPath, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-										.addComponent(wordTemplatePath, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addContainerGap()
-									.addComponent(lblOutput)))
+										.addComponent(lblCreateAColumn)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(lblPleaseSelectExcel)
+											.addGap(39)
+											.addComponent(excelListPath, GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)))))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(excelButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnWordTemplate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(btnStart, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
 					.addGap(6))
 		);
@@ -152,11 +131,8 @@ public class MainGUI extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(wordTemplatePath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblPleaseSelectWord)
-						.addComponent(btnWordTemplate))
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblCreateAColumn)
+					.addGap(15)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblPleaseSelectExcel)
 						.addComponent(excelListPath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -169,7 +145,7 @@ public class MainGUI extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblOutput)
 							.addPreferredGap(ComponentPlacement.RELATED)))
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		

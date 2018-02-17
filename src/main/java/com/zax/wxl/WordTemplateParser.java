@@ -20,20 +20,10 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 public class WordTemplateParser {
-	private String filePath;
 	private JTextPane output;
 
-	public WordTemplateParser(String filePath) {
+	public WordTemplateParser() {
 		super();
-		this.filePath = filePath;
-	}
-
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
 	}
 
 	public JTextPane getOutput() {
@@ -48,8 +38,9 @@ public class WordTemplateParser {
 			throws InvalidFormatException, IOException, BadLocationException {
 		
 		for (int count = 1; count < replacements.size(); count++) {
+			String templatePath = replacements.get(count).get(replacements.get(count).size()-1);
 			@SuppressWarnings("resource")
-			XWPFDocument doc = new XWPFDocument(OPCPackage.open(getFilePath()));// don't close will update template
+			XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
 			for (XWPFParagraph p : doc.getParagraphs()) {
 				List<XWPFRun> runs = p.getRuns();
 				if (runs != null) {
@@ -76,7 +67,7 @@ public class WordTemplateParser {
 					}
 				}
 			}
-			String directory = new File(filePath).getParent();
+			String directory = new File(templatePath).getParent();
 			doc.write(new FileOutputStream(directory + "/" + count + "_output.docx"));
 			this.output.getStyledDocument().insertString(this.output.getText().length(),
 					"\nFile created -> " + directory + "/" + count + "_output.docx", new SimpleAttributeSet());
