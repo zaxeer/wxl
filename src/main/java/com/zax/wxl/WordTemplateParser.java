@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 
@@ -36,9 +37,9 @@ public class WordTemplateParser {
 
 	public void parseWordFile(List<List<String>> replacements)
 			throws InvalidFormatException, IOException, BadLocationException {
-		
+
 		for (int count = 1; count < replacements.size(); count++) {
-			String templatePath = replacements.get(count).get(replacements.get(count).size()-1);
+			String templatePath = replacements.get(count).get(replacements.get(count).size() - 1);
 			String fileName = replacements.get(count).get(0);
 			@SuppressWarnings("resource")
 			XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
@@ -69,9 +70,21 @@ public class WordTemplateParser {
 				}
 			}
 			String directory = new File(templatePath).getParent();
-			doc.write(new FileOutputStream(directory + "/" + count + "_"+ fileName +".docx"));
-			this.output.getStyledDocument().insertString(this.output.getText().length(),
-					"\nFile created -> " + directory + "/" + count + "_"+ fileName +".docx", new SimpleAttributeSet());
+			final String pathOut = directory + "/" + count + "_" + fileName + ".docx";
+			doc.write(new FileOutputStream(pathOut));
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						output.getStyledDocument().insertString(output.getText().length(),
+								"\nFile created -> " + pathOut,
+								new SimpleAttributeSet());
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+
 		}
 
 	}

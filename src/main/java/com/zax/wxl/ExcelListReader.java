@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,7 +47,7 @@ public class ExcelListReader {
 
 			Row currentRow = iterator.next();
 			Iterator<Cell> cellIterator = currentRow.iterator();
-			List<String> row = new ArrayList<String>();
+			final List<String> row = new ArrayList<String>();
 			while (cellIterator.hasNext()) {
 				Cell currentCell = cellIterator.next();
 				// getCellTypeEnum shown as deprecated for version 3.15
@@ -56,9 +59,28 @@ public class ExcelListReader {
 
 			}
 			result.add(row);
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						getOutput().getStyledDocument().insertString(output.getText().length(),row.toString(),new SimpleAttributeSet());
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+
 		}
-		getOutput().setText("Excel parsed\n");
-		getOutput().setText(result.toString());
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					getOutput().getStyledDocument().insertString(output.getText().length(),"\n\nExcel parsed... Preparing file creations . . .\n",new SimpleAttributeSet());
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		workbook.close();
 		return result;
 	}
