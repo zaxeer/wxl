@@ -35,12 +35,18 @@ public class WordTemplateParser {
 		this.output = output;
 	}
 
-	public void parseWordFile(List<List<String>> replacements)
+	public void parseWordFile(List<List<String>> replacements,List<Integer> columns)
 			throws InvalidFormatException, IOException, BadLocationException {
 
 		for (int count = 1; count < replacements.size(); count++) {
 			String templatePath = replacements.get(count).get(replacements.get(count).size() - 1);
-			String fileName = replacements.get(count).get(0);
+			String fileName = "";
+			for(Integer col: columns) {
+				int colValue = col.intValue();
+				colValue--;
+				fileName += replacements.get(count).get(colValue);
+			}
+			
 			@SuppressWarnings("resource")
 			XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
 			for (XWPFParagraph p : doc.getParagraphs()) {
