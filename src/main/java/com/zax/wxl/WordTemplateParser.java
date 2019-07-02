@@ -76,7 +76,8 @@ public class WordTemplateParser {
 				}
 			}
 			String directory = new File(templatePath).getParent();
-			final String pathOut = directory + "/" + count + "_" + fileName + ".docx";
+			final String pathOut = directory + "/" + count + "_" + fileName.replaceAll("[\\\\/:\"*?<>|]+", "_") + ".docx";
+			
 			doc.write(new FileOutputStream(pathOut));
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
