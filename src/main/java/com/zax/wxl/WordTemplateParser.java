@@ -3,6 +3,7 @@ package com.zax.wxl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JTextPane;
@@ -37,14 +38,22 @@ public class WordTemplateParser {
 
 	public void parseWordFile(List<List<String>> replacements,List<Integer> columns)
 			throws InvalidFormatException, IOException, BadLocationException {
-
+		
+		int templatePathIndex = replacements.get(0).indexOf("WORD_TEMPLATE");
+		
 		for (int count = 1; count < replacements.size(); count++) {
-			String templatePath = replacements.get(count).get(replacements.get(count).size() - 1);
+			String templatePath = replacements.get(count).get(templatePathIndex);
 			String fileName = "";
+			boolean addUnderscore = false;
 			for(Integer col: columns) {
 				int colValue = col.intValue();
 				colValue--;
-				fileName += replacements.get(count).get(colValue);
+				if(addUnderscore) {
+					fileName += "_"+replacements.get(count).get(colValue);
+				} else {
+					fileName += replacements.get(count).get(colValue);
+				}
+				addUnderscore = true;
 			}
 			
 			@SuppressWarnings("resource")
@@ -76,7 +85,7 @@ public class WordTemplateParser {
 				}
 			}
 			String directory = new File(templatePath).getParent();
-			final String pathOut = directory + "/" + count + "_" + fileName.replaceAll("[\\\\/:\"*?<>|]+", "_") + ".docx";
+			final String pathOut = directory + File.separator + count + "_" + fileName.replaceAll("[\\\\/:\"*?<>|\\s]+", "_") + ".docx";
 			
 			doc.write(new FileOutputStream(pathOut));
 			SwingUtilities.invokeLater(new Runnable() {
