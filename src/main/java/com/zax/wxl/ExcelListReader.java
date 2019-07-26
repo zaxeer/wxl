@@ -13,6 +13,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -53,9 +54,14 @@ public class ExcelListReader {
 				// getCellTypeEnum shown as deprecated for version 3.15
 				// getCellTypeEnum ill be renamed to getCellType starting from
 				// version 4.0
-				if (currentCell.getStringCellValue() != null) {
+				if (currentCell.getCellTypeEnum().equals(CellType.STRING)) {
 					row.add(currentCell.getStringCellValue().trim());
+				} else if (currentCell.getCellTypeEnum().equals(CellType.NUMERIC)) { 
+					Double dVal = currentCell.getNumericCellValue();
+					int val = dVal.intValue();
+					row.add(""+val);
 				}
+				
 
 			}
 			result.add(row);

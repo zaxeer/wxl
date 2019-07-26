@@ -71,7 +71,7 @@ public class MainGUI extends JFrame {
 		});
 
 		excelListPath = new JTextField();
-		excelListPath.setText("D:\\Jamati Work\\Taleem UL Quraan\\Letter WQAF\\List.xlsx");
+		excelListPath.setText("I:\\Jamati Work\\Taleem UL Quraan\\Letters for Manzoori\\List.xlsx");
 		excelListPath.setColumns(10);
 
 		lblPleaseSelectExcel = new JLabel("Please Select Excel List:");
