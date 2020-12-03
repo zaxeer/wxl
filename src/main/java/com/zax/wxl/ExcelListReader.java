@@ -75,6 +75,10 @@ public class ExcelListReader {
 					Double dVal = currentCell.getNumericCellValue();
 					int val = dVal.intValue();
 					row.add(""+val);
+				} else if(currentCell.getCellTypeEnum().equals(CellType.FORMULA)) { 
+					Double dVal = currentCell.getNumericCellValue();
+					int val = dVal.intValue();
+					row.add(""+val);					
 				}
 				
 

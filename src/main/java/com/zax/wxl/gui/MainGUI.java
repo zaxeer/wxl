@@ -42,6 +42,7 @@ import javax.swing.text.BadLocationException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
+import com.zax.wxl.CSVListReader;
 import com.zax.wxl.ExcelListReader;
 import com.zax.wxl.WordTemplateParser;
 
@@ -75,7 +76,7 @@ public class MainGUI extends JFrame {
 				JFileChooser jFileChooser = new JFileChooser();
 				File workingDirectory = new File(System.getProperty("user.dir"));
 				jFileChooser.setCurrentDirectory(workingDirectory);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xlsx", "xls");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xlsx", "xls", "csv");
 				jFileChooser.setFileFilter(filter);
 				jFileChooser.removeChoosableFileFilter(jFileChooser.getAcceptAllFileFilter());
 				int returnVal = jFileChooser.showOpenDialog((Component) e.getSource());
@@ -100,9 +101,19 @@ public class MainGUI extends JFrame {
 				SwingWorker<String, Void> myWorker = new SwingWorker<String, Void>() {
 					@Override
 					protected String doInBackground() throws Exception {
-						ExcelListReader excelListReader = new ExcelListReader(excelListPath.getText());
+						List<List<String>> data = null;
+						if(excelListPath.getText().endsWith("csv")) {
+							CSVListReader csvListReader = new CSVListReader(excelListPath.getText());
+							csvListReader.setOutput(txtpnOutputAppearHere);
+							data = csvListReader.parseCSV();
+						} else {
+							ExcelListReader excelListReader = new ExcelListReader(excelListPath.getText());
+							excelListReader.setOutput(txtpnOutputAppearHere);
+							data = excelListReader.parseExcel();
+						}
+						
 						WordTemplateParser templateParser = new WordTemplateParser();
-						excelListReader.setOutput(txtpnOutputAppearHere);
+						
 						templateParser.setOutput(txtpnOutputAppearHere);
 						String columsNumber = textFieldFileName.getText();
 						String[] splited = columsNumber.split(",");
@@ -111,7 +122,7 @@ public class MainGUI extends JFrame {
 							columns.add(Integer.parseInt(splited[count].trim()));
 						}
 						try {
-							templateParser.parseWordFile(excelListReader.parseExcel(),columns);
+							templateParser.parseWordFile(data,columns);
 						} catch (IOException e) {
 							txtpnOutputAppearHere.setText(e.getMessage());
 							e.printStackTrace();

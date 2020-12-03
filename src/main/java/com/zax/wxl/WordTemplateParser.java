@@ -50,71 +50,74 @@ public class WordTemplateParser {
 		this.output = output;
 	}
 
-	public void parseWordFile(List<List<String>> replacements,List<Integer> columns)
+	public void parseWordFile(List<List<String>> replacements, List<Integer> columns)
 			throws InvalidFormatException, IOException, BadLocationException {
-		
+
 		int templatePathIndex = replacements.get(0).indexOf("WORD_TEMPLATE");
-		
+
 		for (int count = 1; count < replacements.size(); count++) {
 			String templatePath = replacements.get(count).get(templatePathIndex);
 			String fileName = "";
 			boolean addUnderscore = false;
-			for(Integer col: columns) {
+			for (Integer col : columns) {
 				int colValue = col.intValue();
 				colValue--;
-				if(addUnderscore) {
-					fileName += "_"+replacements.get(count).get(colValue);
+				if (addUnderscore) {
+					fileName += "_" + replacements.get(count).get(colValue);
 				} else {
 					fileName += replacements.get(count).get(colValue);
 				}
 				addUnderscore = true;
 			}
-			
-			@SuppressWarnings("resource")
-			XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
-			for (XWPFParagraph p : doc.getParagraphs()) {
-				List<XWPFRun> runs = p.getRuns();
-				if (runs != null) {
-					for (XWPFRun r : runs) {
-						String text = r.getText(0);
-						if (text != null && !StringUtils.isBlank(text)) {
-							r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)), 0);
+
+			try {
+				XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
+				for (XWPFParagraph p : doc.getParagraphs()) {
+					List<XWPFRun> runs = p.getRuns();
+					if (runs != null) {
+						for (XWPFRun r : runs) {
+							String text = r.getText(0);
+							if (text != null && !StringUtils.isBlank(text)) {
+								r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)), 0);
+							}
 						}
 					}
 				}
-			}
 
-			for (XWPFTable tbl : doc.getTables()) {
-				for (XWPFTableRow row : tbl.getRows()) {
-					for (XWPFTableCell cell : row.getTableCells()) {
-						for (XWPFParagraph p : cell.getParagraphs()) {
-							for (XWPFRun r : p.getRuns()) {
-								String text = r.getText(0);
-								if (text != null && !StringUtils.isBlank(text)) {
-									r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
+				for (XWPFTable tbl : doc.getTables()) {
+					for (XWPFTableRow row : tbl.getRows()) {
+						for (XWPFTableCell cell : row.getTableCells()) {
+							for (XWPFParagraph p : cell.getParagraphs()) {
+								for (XWPFRun r : p.getRuns()) {
+									String text = r.getText(0);
+									if (text != null && !StringUtils.isBlank(text)) {
+										r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			String directory = new File(templatePath).getParent();
-			final String pathOut = directory + File.separator + count + "_" + fileName.replaceAll("[\\\\/:\"*?<>|\\s]+", "_") + ".docx";
-			
-			doc.write(new FileOutputStream(pathOut));
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						output.getStyledDocument().insertString(output.getText().length(),
-								"\nFile created -> " + pathOut,
-								new SimpleAttributeSet());
-					} catch (BadLocationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
+				String directory = new File(templatePath).getParent();
+				final String pathOut = directory + File.separator + count + "_"
+						+ fileName.replaceAll("[\\\\/:\"*?<>|\\s]+", "_") + ".docx";
 
+				doc.write(new FileOutputStream(pathOut));
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							output.getStyledDocument().insertString(output.getText().length(),
+									"\nFile created -> " + pathOut, new SimpleAttributeSet());
+						} catch (BadLocationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+
+			} catch (Exception e) {
+				e.printStackTrace(System.err);
+			}
 		}
 
 	}
