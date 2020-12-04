@@ -16,8 +16,11 @@
 package com.zax.wxl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.swing.JTextPane;
@@ -37,6 +40,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 public class WordTemplateParser {
 	private JTextPane output;
+	private String optionalWordTemplate;
+	private boolean useOptionalWordTemplate = false;
 
 	public WordTemplateParser() {
 		super();
@@ -55,8 +60,23 @@ public class WordTemplateParser {
 
 		int templatePathIndex = replacements.get(0).indexOf("WORD_TEMPLATE");
 
+		if (StringUtils.isNotBlank(optionalWordTemplate)
+				&& (optionalWordTemplate.endsWith("doc") || optionalWordTemplate.endsWith("docx"))
+				&& Files.exists(Paths.get(optionalWordTemplate))) {
+			useOptionalWordTemplate = true;
+		}
+
 		for (int count = 1; count < replacements.size(); count++) {
 			String templatePath = replacements.get(count).get(templatePathIndex);
+			if (useOptionalWordTemplate) {
+				templatePath = optionalWordTemplate;
+			}
+
+			if (StringUtils.isBlank(templatePath) || !Files.exists(Paths.get(templatePath))
+					|| (!templatePath.endsWith("doc") && !templatePath.endsWith("docx"))) {
+				throw new FileNotFoundException("Word template not found or not valid " + templatePath);
+			}
+
 			String fileName = "";
 			boolean addUnderscore = false;
 			for (Integer col : columns) {
@@ -103,23 +123,26 @@ public class WordTemplateParser {
 						+ fileName.replaceAll("[\\\\/:\"*?<>|\\s]+", "_") + ".docx";
 
 				doc.write(new FileOutputStream(pathOut));
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							output.getStyledDocument().insertString(output.getText().length(),
-									"\nFile created -> " + pathOut, new SimpleAttributeSet());
-						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
+				updateGUI(pathOut);
 
 			} catch (Exception e) {
-				e.printStackTrace(System.err);
+				e.printStackTrace();
 			}
 		}
 
+	}
+
+	private void updateGUI(final String pathOut) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					output.getStyledDocument().insertString(output.getText().length(),
+							"\nFile created -> " + pathOut, new SimpleAttributeSet());
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -139,6 +162,14 @@ public class WordTemplateParser {
 			}
 		}
 		return text;
+	}
+
+	public String getOptionalWordTemplate() {
+		return optionalWordTemplate;
+	}
+
+	public void setOptionalWordTemplate(String optionalWordTemplate) {
+		this.optionalWordTemplate = optionalWordTemplate;
 	}
 
 }
