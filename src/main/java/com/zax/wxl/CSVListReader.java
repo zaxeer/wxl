@@ -17,6 +17,7 @@ package com.zax.wxl;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +51,7 @@ public class CSVListReader {
 	public List<List<String>> parseCSV() throws IOException, CsvValidationException {
 		
 		List<List<String>> records = new ArrayList<List<String>>();
-		try (CSVReader csvReader = new CSVReader(new FileReader(this.getFilePath()));) {
+		try (CSVReader csvReader = new CSVReader(new FileReader(this.getFilePath(), StandardCharsets.UTF_8));) {
 		    String[] values = null;
 		    while ((values = csvReader.readNext()) != null) {
 		        records.add(Arrays.asList(values));

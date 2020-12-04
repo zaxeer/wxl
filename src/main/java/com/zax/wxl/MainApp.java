@@ -19,7 +19,7 @@ public class MainApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("Starting........");
+		System.out.println("Starting........");		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
