@@ -18,7 +18,6 @@ package com.zax.wxl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -29,7 +28,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -55,42 +53,41 @@ public class WordTemplateParser {
 		this.output = output;
 	}
 
-	public void parseWordFile(List<List<String>> replacements, List<Integer> columns)
-			throws InvalidFormatException, IOException, BadLocationException {
-
-		int templatePathIndex = replacements.get(0).indexOf("WORD_TEMPLATE");
-
-		if (StringUtils.isNotBlank(optionalWordTemplate)
-				&& (optionalWordTemplate.endsWith("doc") || optionalWordTemplate.endsWith("docx"))
-				&& Files.exists(Paths.get(optionalWordTemplate))) {
-			useOptionalWordTemplate = true;
-		}
-
-		for (int count = 1; count < replacements.size(); count++) {
-			String templatePath = replacements.get(count).get(templatePathIndex);
-			if (useOptionalWordTemplate) {
-				templatePath = optionalWordTemplate;
+	public void parseWordFile(List<List<String>> replacements, List<Integer> columns) throws Exception {
+		try {
+			if (StringUtils.isNotBlank(optionalWordTemplate)
+					&& (optionalWordTemplate.endsWith("doc") || optionalWordTemplate.endsWith("docx"))
+					&& Files.exists(Paths.get(optionalWordTemplate))) {
+				useOptionalWordTemplate = true;
 			}
 
-			if (StringUtils.isBlank(templatePath) || !Files.exists(Paths.get(templatePath))
-					|| (!templatePath.endsWith("doc") && !templatePath.endsWith("docx"))) {
-				throw new FileNotFoundException("Word template not found or not valid " + templatePath);
-			}
-
-			String fileName = "";
-			boolean addUnderscore = false;
-			for (Integer col : columns) {
-				int colValue = col.intValue();
-				colValue--;
-				if (addUnderscore) {
-					fileName += "_" + replacements.get(count).get(colValue);
+			for (int count = 1; count < replacements.size(); count++) {
+				String templatePath = null;
+				if (useOptionalWordTemplate) {
+					templatePath = optionalWordTemplate;
 				} else {
-					fileName += replacements.get(count).get(colValue);
+					int templatePathIndex = replacements.get(0).indexOf("WORD_TEMPLATE");
+					templatePath = replacements.get(count).get(templatePathIndex);
 				}
-				addUnderscore = true;
-			}
 
-			try {
+				if (StringUtils.isBlank(templatePath) || !Files.exists(Paths.get(templatePath))
+						|| (!templatePath.endsWith("doc") && !templatePath.endsWith("docx"))) {
+					throw new FileNotFoundException("Word template not found or not valid " + templatePath);
+				}
+
+				String fileName = "";
+				boolean addUnderscore = false;
+				for (Integer col : columns) {
+					int colValue = col.intValue();
+					colValue--;
+					if (addUnderscore) {
+						fileName += "_" + replacements.get(count).get(colValue);
+					} else {
+						fileName += replacements.get(count).get(colValue);
+					}
+					addUnderscore = true;
+				}
+
 				XWPFDocument doc = new XWPFDocument(OPCPackage.open(templatePath));// don't close will update template
 				for (XWPFParagraph p : doc.getParagraphs()) {
 					List<XWPFRun> runs = p.getRuns();
@@ -108,7 +105,7 @@ public class WordTemplateParser {
 					for (XWPFTableRow row : tbl.getRows()) {
 						for (XWPFTableCell cell : row.getTableCells()) {
 							for (XWPFParagraph p : cell.getParagraphs()) {
-								for (XWPFRun r : p.getRuns()) {
+								for (XWPFRun r : p.getRuns()) {									
 									String text = r.getText(0);
 									if (text != null && !StringUtils.isBlank(text)) {
 										r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
@@ -119,25 +116,42 @@ public class WordTemplateParser {
 					}
 				}
 				String directory = new File(templatePath).getParent();
-				final String pathOut = directory + File.separator + count + "_"
+				File subDirectory = new File(directory + File.separator + "gen_docs");
+				subDirectory.mkdir();
+				
+				final String pathOut = directory + File.separator + "gen_docs" + File.separator + count + "_"
 						+ fileName.replaceAll("[\\\\/:\"*?<>|\\s]+", "_") + ".docx";
 
 				doc.write(new FileOutputStream(pathOut));
 				updateGUI(pathOut);
-
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-		}
 
+		} catch (Exception e) {
+			updateGUIError(e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
 	}
 
 	private void updateGUI(final String pathOut) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					output.getStyledDocument().insertString(output.getText().length(),
-							"\nFile created -> " + pathOut, new SimpleAttributeSet());
+					output.getStyledDocument().insertString(output.getText().length(), "\nFile created -> " + pathOut,
+							new SimpleAttributeSet());
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void updateGUIError(final String message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					output.getStyledDocument().insertString(output.getText().length(), "Error::" + message,
+							new SimpleAttributeSet());
 				} catch (BadLocationException e) {
 					e.printStackTrace();
 				}

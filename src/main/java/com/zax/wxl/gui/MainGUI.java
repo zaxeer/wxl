@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -45,7 +46,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import com.zax.wxl.CSVListReader;
 import com.zax.wxl.ExcelListReader;
 import com.zax.wxl.WordTemplateParser;
-import javax.swing.SwingConstants;
 
 public class MainGUI extends JFrame {
 
