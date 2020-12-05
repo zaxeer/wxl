@@ -66,16 +66,13 @@ public class ExcelListReader {
 			final List<String> row = new ArrayList<String>();
 			while (cellIterator.hasNext()) {
 				Cell currentCell = cellIterator.next();
-				// getCellTypeEnum shown as deprecated for version 3.15
-				// getCellTypeEnum ill be renamed to getCellType starting from
-				// version 4.0
-				if (currentCell.getCellTypeEnum().equals(CellType.STRING)) {
+				if (currentCell.getCellType().equals(CellType.STRING)) {
 					row.add(currentCell.getStringCellValue().trim());
-				} else if (currentCell.getCellTypeEnum().equals(CellType.NUMERIC)) { 
+				} else if (currentCell.getCellType().equals(CellType.NUMERIC)) { 
 					Double dVal = currentCell.getNumericCellValue();
 					int val = dVal.intValue();
 					row.add(""+val);
-				} else if(currentCell.getCellTypeEnum().equals(CellType.FORMULA)) { 
+				} else if(currentCell.getCellType().equals(CellType.FORMULA)) { 
 					Double dVal = currentCell.getNumericCellValue();
 					int val = dVal.intValue();
 					row.add(""+val);					
