@@ -93,9 +93,9 @@ public class WordTemplateParser {
 					List<XWPFRun> runs = p.getRuns();
 					if (runs != null) {
 						for (XWPFRun r : runs) {
-							String text = r.text();
+							String text = r.getText(0);
 							if (text != null && !StringUtils.isBlank(text)) {
-								r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
+								r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)), 0);
 							}
 						}
 					}
@@ -105,8 +105,8 @@ public class WordTemplateParser {
 					for (XWPFTableRow row : tbl.getRows()) {
 						for (XWPFTableCell cell : row.getTableCells()) {
 							for (XWPFParagraph p : cell.getParagraphs()) {
-								for (XWPFRun r : p.getRuns()) {
-									String text = r.text();
+								for (XWPFRun r : p.getRuns()) {									
+									String text = r.getText(0);
 									if (text != null && !StringUtils.isBlank(text)) {
 										r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
 									}
