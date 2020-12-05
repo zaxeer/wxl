@@ -49,24 +49,25 @@ public class CSVListReader {
 	}
 
 	public List<List<String>> parseCSV() throws IOException, CsvValidationException {
-		
+
 		List<List<String>> records = new ArrayList<List<String>>();
 		try (CSVReader csvReader = new CSVReader(new FileReader(this.getFilePath(), StandardCharsets.UTF_8));) {
-		    String[] values = null;
-		    while ((values = csvReader.readNext()) != null) {
-		        records.add(Arrays.asList(values));
-		        addToGUI(values);
-		    }
+			String[] values = null;
+			while ((values = csvReader.readNext()) != null) {
+				records.add(Arrays.asList(values));
+				addToGUI(values);
+			}
 		}
-		addToGUILast();		
+		addToGUILast();
 		return records;
 	}
 
-	private void addToGUI(final String[] values ) {
+	private void addToGUI(final String[] values) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					getOutput().getStyledDocument().insertString(output.getText().length(),Arrays.toString(values),new SimpleAttributeSet());
+					getOutput().getStyledDocument().insertString(output.getText().length(), Arrays.toString(values),
+							new SimpleAttributeSet());
 				} catch (BadLocationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -79,7 +80,8 @@ public class CSVListReader {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					getOutput().getStyledDocument().insertString(output.getText().length(),"\n\nExcel parsed... Preparing file creations . . .\n",new SimpleAttributeSet());
+					getOutput().getStyledDocument().insertString(output.getText().length(),
+							"\n\nExcel parsed... Preparing file creations . . .\n", new SimpleAttributeSet());
 				} catch (BadLocationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

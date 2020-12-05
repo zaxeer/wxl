@@ -93,9 +93,9 @@ public class WordTemplateParser {
 					List<XWPFRun> runs = p.getRuns();
 					if (runs != null) {
 						for (XWPFRun r : runs) {
-							String text = r.getText(0);
+							String text = r.text();
 							if (text != null && !StringUtils.isBlank(text)) {
-								r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)), 0);
+								r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
 							}
 						}
 					}
@@ -105,8 +105,8 @@ public class WordTemplateParser {
 					for (XWPFTableRow row : tbl.getRows()) {
 						for (XWPFTableCell cell : row.getTableCells()) {
 							for (XWPFParagraph p : cell.getParagraphs()) {
-								for (XWPFRun r : p.getRuns()) {									
-									String text = r.getText(0);
+								for (XWPFRun r : p.getRuns()) {
+									String text = r.text();
 									if (text != null && !StringUtils.isBlank(text)) {
 										r.setText(replaceSearch(text, replacements.get(0), replacements.get(count)));
 									}
@@ -118,7 +118,7 @@ public class WordTemplateParser {
 				String directory = new File(templatePath).getParent();
 				File subDirectory = new File(directory + File.separator + "gen_docs");
 				subDirectory.mkdir();
-				
+
 				final String pathOut = directory + File.separator + "gen_docs" + File.separator + count + "_"
 						+ fileName.replaceAll("[\\\\/:\"*?<>|\\s]+", "_") + ".docx";
 

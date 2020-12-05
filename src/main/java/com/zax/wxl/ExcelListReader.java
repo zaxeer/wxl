@@ -68,23 +68,23 @@ public class ExcelListReader {
 				Cell currentCell = cellIterator.next();
 				if (currentCell.getCellType().equals(CellType.STRING)) {
 					row.add(currentCell.getStringCellValue().trim());
-				} else if (currentCell.getCellType().equals(CellType.NUMERIC)) { 
+				} else if (currentCell.getCellType().equals(CellType.NUMERIC)) {
 					Double dVal = currentCell.getNumericCellValue();
 					int val = dVal.intValue();
-					row.add(""+val);
-				} else if(currentCell.getCellType().equals(CellType.FORMULA)) { 
+					row.add("" + val);
+				} else if (currentCell.getCellType().equals(CellType.FORMULA)) {
 					Double dVal = currentCell.getNumericCellValue();
 					int val = dVal.intValue();
-					row.add(""+val);					
+					row.add("" + val);
 				}
-				
 
 			}
 			result.add(row);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						getOutput().getStyledDocument().insertString(output.getText().length(),row.toString(),new SimpleAttributeSet());
+						getOutput().getStyledDocument().insertString(output.getText().length(), row.toString(),
+								new SimpleAttributeSet());
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -96,7 +96,8 @@ public class ExcelListReader {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					getOutput().getStyledDocument().insertString(output.getText().length(),"\n\nExcel parsed... Preparing file creations . . .\n",new SimpleAttributeSet());
+					getOutput().getStyledDocument().insertString(output.getText().length(),
+							"\n\nExcel parsed... Preparing file creations . . .\n", new SimpleAttributeSet());
 				} catch (BadLocationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
