@@ -18,6 +18,7 @@ package com.zax.wxl.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -51,7 +52,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import com.zax.wxl.CSVListReader;
 import com.zax.wxl.ExcelListReader;
 import com.zax.wxl.WordTemplateParser;
-import java.awt.Toolkit;
 
 public class MainGUI extends JFrame {
 

@@ -15,8 +15,10 @@
  ******************************************************************************/
 package com.zax.wxl;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +29,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
 public class CSVListReader {
@@ -51,13 +56,25 @@ public class CSVListReader {
 	public List<List<String>> parseCSV() throws IOException, CsvValidationException {
 
 		List<List<String>> records = new ArrayList<List<String>>();
-		try (CSVReader csvReader = new CSVReader(new FileReader(this.getFilePath(), StandardCharsets.UTF_8));) {
-			String[] values = null;
-			while ((values = csvReader.readNext()) != null) {
-				records.add(Arrays.asList(values));
-				addToGUI(values);
+		try (BufferedReader br = new BufferedReader(new FileReader(this.getFilePath(), StandardCharsets.UTF_8))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				// Auto-detect delimiter
+				char delimiter = line.contains(";") ? ';' : ',';
+				CSVParser parser = new CSVParserBuilder().withSeparator(delimiter).build();
+				CSVReader reader = new CSVReaderBuilder(new StringReader(line)).withCSVParser(parser).build();
+
+				String[] values = reader.readNext();
+				if (values != null) {
+					records.add(Arrays.asList(values));
+					addToGUI(values);
+				}
 			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
 		addToGUILast();
 		return records;
 	}

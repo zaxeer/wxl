@@ -80,6 +80,7 @@ public class WordTemplateParser {
 				for (Integer col : columns) {
 					int colValue = col.intValue();
 					colValue--;
+					System.out.println("list " + replacements.get(count));
 					if (addUnderscore) {
 						fileName += "_" + replacements.get(count).get(colValue);
 					} else {
@@ -167,12 +168,14 @@ public class WordTemplateParser {
 	 */
 	private String replaceSearch(String text, List<String> searchList, List<String> replaceList) {
 		for (int count = 0; count < searchList.size(); count++) {
-			String search = searchList.get(count);
-			String replace = replaceList.get(count);
-			if (text.contains(search)) {
+			String search = searchList.get(count).trim();
+			String replace = replaceList.get(count).trim();
+			if (text.trim().contains(search) || text.trim().equals(search)) {
 				text = text.replace(search, replace);
-				System.out.println("founded in " + text);
-				System.out.println("replacing " + search + " -> " + replace);
+				//System.out.println("founded "+ search +" in " + text);
+				//System.out.println("replacing " + search + " -> " + replace);
+			} else {
+				//System.out.println("no match " + search + " in " + text);
 			}
 		}
 		return text;
